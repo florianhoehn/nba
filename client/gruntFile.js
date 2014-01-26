@@ -335,8 +335,7 @@ module.exports = function (grunt) {
 		'usemin',
 		'ngdocs',
 		'karma:build',
-		'plato',
-		'coverage'
+		'plato'
 	]);
 
 };
