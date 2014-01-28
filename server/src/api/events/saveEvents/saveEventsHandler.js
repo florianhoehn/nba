@@ -14,6 +14,7 @@ var saveHandler = function (date) {
 		events(date)
 		.then(function (events) {
 			var event = events.event;
+			console.log('EVENT: ', event);
 			var isCompleted = true;
 			for (var i in events.event) {
 				if (event[i].event_status !== 'completed') {
@@ -38,6 +39,6 @@ var saveHandler = function (date) {
 	
 };
 
-saveHandler('2014-01-23');
+saveHandler('2014-01-27');
 
 //module.exports = saveHandler;

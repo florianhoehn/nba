@@ -2,22 +2,21 @@
 
 var deferred = require('q').defer(),
 		db = require('../../../util/mongo/dbConnect'),
-		dbUtils = require('../../../util/mongo/dbUtils'),
-		validateApiDate = require('../../../util/validateApiDate');
+		DbUtils = require('../../../util/mongo/dbUtils'),
+		validateApiDate = require('../../../util/validateApiRequestParams').apiDate;
 
 var saveEvents = function (date, events) {
 	var method = 'saveEvents',
-			apiDateValidationObj = validateApiDate(date, method),
-			saveCb = dbUtils.saveCb;
+			apiDateValidationObj = validateApiDate(date, method);
 
-	dbUtils.deferred = deferred;
-	dbUtils.logInfo.msg = 'Events';
-	dbUtils.logInfo.method = method;
 	if (apiDateValidationObj.isValid) {
+		var logInfo = {method: method, msg: 'Saving Events for ' + date},
+				dbUtil = new DbUtils(deferred, logInfo);
+	
 		db.events.save({
 			_id: date,
 			events: events
-		}, saveCb);
+		}, dbUtil.callback.bind(dbUtil));
 	}
 	else {
 		deferred.reject(new Error(apiDateValidationObj.err.message));

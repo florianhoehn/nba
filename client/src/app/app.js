@@ -16,10 +16,12 @@ angular.module('app', ['templates', 'common', 'ngRoute'])
 			$scope.message = 'Hello World';
 			$scope.templateUrl = 'app/app.view.html';
 			$http.get('/api/v1/events').then(function (events) {
-				console.log('My Events: ', events);
-				$scope.events = events.data.events;
+				if (events) {
+					console.log('My Events: ', events);
+					$scope.events = events.data.events;
+				}
 			}, function (err) {
-				$scope.events = err;
+				$scope.error = err.data.message;
 			});
 		}
 	]);

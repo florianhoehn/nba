@@ -3,7 +3,7 @@
 var sinon = require('sinon'),
 		rewire = require('rewire'),
 		events = rewire('../../../../src/api/events/xmlstats/events'),
-		logger = events.__get__('logger'),
+		logger = require('../../../../src/util/logger'),
 		deferred = events.__get__('deferred'),
 		testHelpers = require('../../../helpers'),
 		checkLogStub = testHelpers.checkLogStub,
@@ -60,17 +60,6 @@ describe('Get Events from XMLStats', function () {
 	});
 
 	describe('\nValid Date Argument\n', function () {
-
-		it('should log that the events api is being called', function () {
-			events('20131224');
-			checkLogStub(logStub, 'info', 'Calling **Events** API from XMLStats for 20131224', ['nba_info', 'xmlstats_info']);
-		});
-
-		it('should log that it tries to make a call to events api', function () {
-			events('20131224');
-			expect(reqStub.called).toBe(true);
-			expect(reqStub.callCount).toEqual(1);
-		});
 
 		it('should call the events API with the correct arguments', function () {
 			events('20131224');

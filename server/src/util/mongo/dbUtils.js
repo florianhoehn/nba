@@ -1,52 +1,29 @@
 'use strict';
 var logger = require('../logger');
 
-var dbUtils = {
-	deferred: {},
-	logInfo: {
-		msg: '',
-		method: ''
-	},
-	saveCb: function (err, result) {
-		var logDetails = dbUtils.logInfo;
-		if (err) {
-			logger.log('error', 'Saving ' + logDetails.msg + ' in MongoDB failed with error: ' + err, {
-				tags: ['nba_error', 'mongo_error'],
-				method: logDetails.method,
-				timestamp: new Date()
-			});
-			dbUtils.deferred.reject(new Error(err));
-		}
-		else {
-			logger.log('info', logDetails.msg + ' saved in MongoDB successfully', {
-				tags: ['nba_info', 'mongo_info'],
-				method: logDetails.method,
-				timestamp: new Date()
-			});
-			dbUtils.deferred.resolve(result);
-		}
-		return dbUtils.deferred.promise;
-	},
-	dbCb: function (err, result) {
-		var logDetails = dbUtils.logInfo;
-		if (err) {
-			logger.log('error', logDetails.msg + ' MongoDB failed with error: ' + err, {
-				tags: ['nba_error', 'mongo_error'],
-				method: logDetails.method,
-				timestamp: new Date()
-			});
-			dbUtils.deferred.reject(new Error(err));
-		}
-		else {
-			logger.log('info', logDetails.msg + ' MongoDB succeeded', {
-				tags: ['nba_info', 'mongo_info'],
-				method: logDetails.method,
-				timestamp: new Date()
-			});
-			dbUtils.deferred.resolve(result);
-		}
-		return dbUtils.deferred.promise;
-	}
+var DbUtils = function (deferred, logInfo) {
+	this.deferred = deferred;
+	this.logInfo = logInfo;
 };
 
-module.exports = dbUtils;
+DbUtils.prototype.callback = function (err, result) {
+	if (err) {
+		logger.log('error', 'MongoDB: ' + this.logInfo.msg + ' failed with error: ' + err, {
+			tags: ['nba_error', 'mongo_error'],
+			method: this.logInfo.method,
+			timestamp: new Date()
+		});
+		this.deferred.reject(new Error(err));
+	}
+	else {
+		logger.log('info', 'MongoDB: ' + this.logInfo.msg + ' succeeded', {
+			tags: ['nba_info', 'mongo_info'],
+			method: this.logInfo.method,
+			timestamp: new Date()
+		});
+		this.deferred.resolve(result);
+	}
+	return this.deferred.promise;
+};
+
+module.exports = DbUtils;
